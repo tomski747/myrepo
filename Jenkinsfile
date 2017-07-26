@@ -9,7 +9,7 @@ def shOut(cmd){
 def dockerTagJoin(tg){
   params = []
   tg.each{
-    params << "--tag ${prefix}:${it}"
+    params << "--tag ${env.REGISTRY_PREFIX}:${it}"
   }
   params.join(' ').replace('/','_')
 }
@@ -32,6 +32,7 @@ withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 
           envVars: [
             containerEnvVar(key: 'USERNAME', value: env.USERNAME),
             containerEnvVar(key: 'PASSWORD', value: env.PASSWORD),
+            containerEnvVar(key: 'REGISTRY_PREFIX', value: 'geoquant/myrepo'),
             containerEnvVar(key: 'DOCKER_PUSH', value: 'true')
             ],
         command: '/bin/cat')
