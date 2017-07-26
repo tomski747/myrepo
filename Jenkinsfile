@@ -59,7 +59,7 @@ withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 
         ]
         tags = dockerTagJoin([branchName,buildTag])
         labels = dockerLabelJoin(buildMetadata)
-        cmd =  "echo docker build $tags $labels ."
+        cmd =  "echo docker build ${tags} ${labels} ."
         sh cmd
       }
     }
