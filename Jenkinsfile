@@ -32,13 +32,20 @@ withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 
       stage('Checkout'){
         git credentialsId: 'jenkins-ssh',
         url: 'git@github.com:tomski747/myrepo.git'
-        buildArgs = [
-          'build_number': env.BUILD_NUMBER,
-          'build_tag': env.BUILD_TAG.replace('/','_'),
+        buildMetadata = [
+          'build_tag': env.BUILD_TAG,
+          // 'build_tag': env.BUILD_TAG.replace('/','_'),
           'git.branch': shOut("git rev-parse --abbrev-ref HEAD"),
           'git.revision': shOut("git rev-parse HEAD")
 
         ]
+        print buildMetadata
+        // tags = []
+        // labels = []
+        // buildMetadata.each { k,v ->
+        //   tags << ""
+        //
+        // }
       }
     }
   }
