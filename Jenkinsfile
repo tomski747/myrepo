@@ -6,17 +6,17 @@ def shOut(cmd){
   sh(script: cmd, returnStdout: true).trim()
 }
 
-dockerTagJoin(tags){
+dockerTagJoin(tg){
   params = []
-  tags.each{
+  tg.each{
     params << "--tag ${prefix}:${it}"
   }
   params.join(' ').replace('/','_')
 }
 
-dockerLabelJoin(labels){
+dockerLabelJoin(lbl){
   params = []
-  tags.each{ k,v ->
+  lbl.each{ k,v ->
     params << "--label ${k}=${v}"
   }
   params.join(' ')
