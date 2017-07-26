@@ -40,6 +40,7 @@ withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 
 
         ]
         print buildMetadata
+        sh 'env | sort'
         // tags = []
         // labels = []
         // buildMetadata.each { k,v ->
