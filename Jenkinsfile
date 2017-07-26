@@ -6,6 +6,22 @@ def shOut(cmd){
   sh(script: cmd, returnStdout: true).trim()
 }
 
+dockerTagJoin(tags){
+  params = []
+  tags.each{
+    params << "--tag ${prefix}:${it}"
+  }
+  params.join(' ').replace('/','_')
+}
+
+dockerLabelJoin(labels){
+  params = []
+  tags.each{ k,v ->
+    params << "--label ${k}=${v}"
+  }
+  params.join(' ')
+}
+
 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
   podTemplate(label: 'docker',
     containers: [
@@ -32,21 +48,18 @@ withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 
       stage('Checkout'){
         git credentialsId: 'jenkins-ssh',
         url: 'git@github.com:tomski747/myrepo.git'
+        branchName = env.BRANCH_NAME
+        buildTag = "${branchName}-${env.BUILD_NUMBER}"
+        registryPrefix = 'geoquant/myrepo'
         buildMetadata = [
-          'build_tag': env.BUILD_TAG,
-          // 'build_tag': env.BUILD_TAG.replace('/','_'),
-          'git.branch': shOut("git rev-parse --abbrev-ref HEAD"),
+          'build_tag':  buildTag,
+          'git.branch': branchName,
           'git.revision': shOut("git rev-parse HEAD")
 
         ]
-        print buildMetadata
-        sh 'env | sort'
-        // tags = []
-        // labels = []
-        // buildMetadata.each { k,v ->
-        //   tags << ""
-        //
-        // }
+        tags = dockerTagJoin([branchName,buildTag])
+        labels = dockerLabelJoin(buildMetadata)
+        print "docker build $tags $labels ."
       }
     }
   }
